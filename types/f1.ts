@@ -4,7 +4,8 @@ export type PartCategory =
   | "rearWing"
   | "frontWing"
   | "suspension"
-  | "engine";
+  | "engine"
+  | "battery";
 
 export type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
 
@@ -14,6 +15,7 @@ export interface CarStats {
   powerUnit: number;
   qualifying: number;
   pitStopTime: number; // in secondi (es. 0.45s) - più basso è meglio!
+  overtakeMode?: number; // Statistica speciale esclusiva della categoria Batterie
 }
 
 export interface DriverStats {
@@ -39,7 +41,7 @@ export interface Part {
 export interface Driver {
   id: string;
   name: string;
-  team: string;
+  team?: string;
   rarity: Rarity;
   series: number;
   level: number;
@@ -174,6 +176,7 @@ export interface CustomWeights {
     powerUnit: number;
     qualifying: number;
     pitStopTime: number;
+    overtakeMode: number;
   };
   driver: {
     overtaking: number;

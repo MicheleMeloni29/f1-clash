@@ -119,26 +119,24 @@ export const TracksTab: React.FC<TracksTabProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[#181b22] border border-[#272c38]">
-        <div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-[#e10600]" />
-            <h2 className="text-xl font-mono font-black text-white tracking-tight uppercase">
-              Gestione Circuiti (Track Manager)
-            </h2>
-          </div>
-          <p className="text-xs text-zinc-400 font-mono mt-1">
-            Ogni circuito in F1 Clash richiede esattamente 2 caratteristiche (tra Sorpasso, Power Unit, Velocità, Sterzata, Partenza, Difesa, Gestione Pneumatici).
-          </p>
+    <div className="space-y-4">
+      {/* TOOLBAR SLIM UNIFICATA TRACK MANAGER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#181b22] rounded-2xl border border-[#272c38]">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-[#e10600]" />
+          <h2 className="font-mono font-bold text-sm text-white uppercase tracking-tight">
+            Gestione Circuiti
+          </h2>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+            {tracks.length} Circuiti
+          </span>
         </div>
 
         <button
           onClick={handleOpenCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#e10600] to-[#b30500] hover:from-[#f00700] hover:to-[#c50500] text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg transition-all"
+          className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#e10600] to-[#b30500] hover:from-[#f00700] hover:to-[#c50500] text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg transition-all"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           <span>Nuovo Circuito</span>
         </button>
       </div>

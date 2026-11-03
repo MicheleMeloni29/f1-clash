@@ -43,6 +43,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         valB: statsB ? statsB.speed : null,
         normB: statsB ? normalize(statsB.speed, 280) : null,
         display: (v: number) => `${Math.round(v)}`,
+        accentColor: "#3b82f6",
       },
       {
         key: "cornering",
@@ -52,6 +53,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         valB: statsB ? statsB.cornering : null,
         normB: statsB ? normalize(statsB.cornering, 280) : null,
         display: (v: number) => `${Math.round(v)}`,
+        accentColor: "#10b981",
       },
       {
         key: "powerUnit",
@@ -61,6 +63,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         valB: statsB ? statsB.powerUnit : null,
         normB: statsB ? normalize(statsB.powerUnit, 280) : null,
         display: (v: number) => `${Math.round(v)}`,
+        accentColor: "#a855f7",
       },
       {
         key: "qualifying",
@@ -70,6 +73,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         valB: statsB ? statsB.qualifying : null,
         normB: statsB ? normalize(statsB.qualifying, 260) : null,
         display: (v: number) => `${Math.round(v)}`,
+        accentColor: "#eab308",
       },
       {
         key: "pitStopTime",
@@ -79,6 +83,17 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         valB: statsB ? statsB.pitStopTime : null,
         normB: statsB ? normalizePit(statsB.pitStopTime) : null,
         display: (v: number) => `${v.toFixed(2)}s`,
+        accentColor: "#06b6d4",
+      },
+      {
+        key: "overtakeMode",
+        label: "⚡ Overtake",
+        valA: statsA.overtakeMode ?? 0,
+        normA: normalize(statsA.overtakeMode ?? 0, 100),
+        valB: statsB ? (statsB.overtakeMode ?? 0) : null,
+        normB: statsB ? normalize(statsB.overtakeMode ?? 0, 100) : null,
+        display: (v: number) => `${Math.round(v)}`,
+        accentColor: "#f59e0b",
       },
     ];
   }, [statsA, statsB]);
@@ -271,15 +286,14 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 </text>
                 <text
                   x={x}
-                  y={y + 9}
+                  y={y + 10}
                   textAnchor={textAnchor}
-                  className={`text-[11px] font-bold font-mono transition-colors ${
-                    isHovered ? "fill-[#e10600]" : "fill-zinc-200"
-                  }`}
+                  className="text-xs font-black font-mono transition-colors"
+                  fill={isHovered ? "#ffffff" : axis.accentColor || "#f4f4f5"}
                 >
                   {axis.display(axis.valA)}
                   {statsB && axis.valB !== null && (
-                    <tspan fill={colorB} className="font-normal">
+                    <tspan fill={colorB} className="font-normal text-[11px]">
                       {" "}
                       | {axis.display(axis.valB)}
                     </tspan>

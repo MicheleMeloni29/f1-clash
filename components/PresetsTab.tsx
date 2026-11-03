@@ -140,6 +140,7 @@ export const PresetsTab: React.FC<PresetsTabProps> = ({
         powerUnit: carA.powerUnit - carB.powerUnit,
         qualifying: carA.qualifying - carB.qualifying,
         pitStopTime: carA.pitStopTime - carB.pitStopTime,
+        overtakeMode: (carA.overtakeMode || 0) - (carB.overtakeMode || 0),
       },
       driver1: {
         overtaking: d1A.overtaking - d1B.overtaking,
@@ -159,20 +160,17 @@ export const PresetsTab: React.FC<PresetsTabProps> = ({
   }, [dataA, dataB]);
 
   return (
-    <div className="space-y-8">
-      {/* Intestazione Sezione */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[#181b22] border border-[#272c38]">
-        <div>
-          <div className="flex items-center gap-2">
-            <FolderArchive className="w-5 h-5 text-[#e10600]" />
-            <h2 className="text-xl font-mono font-black text-white tracking-tight uppercase">
-              Libreria Preset & Confronto Side-by-Side
-            </h2>
-          </div>
-          <p className="text-xs text-zinc-400 font-mono mt-1">
-            Tutti i preset salvati si ricalcolano automaticamente quando aggiorni i livelli nel
-            garage. Confronta due configurazioni per analizzare i delta telemetrici.
-          </p>
+    <div className="space-y-6">
+      {/* TOOLBAR SLIM PRESET */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#181b22] rounded-2xl border border-[#272c38]">
+        <div className="flex items-center gap-2">
+          <FolderArchive className="w-4 h-4 text-[#e10600]" />
+          <h2 className="font-mono font-bold text-sm text-white uppercase tracking-tight">
+            Libreria Preset & Confronto Telemetria
+          </h2>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+            {presets.length} Salvati
+          </span>
         </div>
       </div>
 
@@ -308,11 +306,12 @@ export const PresetsTab: React.FC<PresetsTabProps> = ({
                     { label: "Power Unit", key: "powerUnit", isPit: false },
                     { label: "Qualifica Auto", key: "qualifying", isPit: false },
                     { label: "Tempo Pit Stop", key: "pitStopTime", isPit: true },
+                    { label: "⚡ Modalità Overtake", key: "overtakeMode", isPit: false },
                   ].map((row) => {
                     const carKey = row.key as keyof CarStats;
-                    const valA = dataA.loadout.baseCarStats[carKey];
-                    const valB = dataB.loadout.baseCarStats[carKey];
-                    const diff = deltas.car[carKey];
+                    const valA = dataA.loadout.baseCarStats[carKey] ?? 0;
+                    const valB = dataB.loadout.baseCarStats[carKey] ?? 0;
+                    const diff = deltas.car[carKey] ?? 0;
                     const deltaInfo = formatDelta(diff, row.isPit);
 
                     return (

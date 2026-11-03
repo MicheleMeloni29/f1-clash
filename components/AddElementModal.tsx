@@ -43,10 +43,11 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
   const [partPowerUnit, setPartPowerUnit] = useState(45);
   const [partQualifying, setPartQualifying] = useState(45);
   const [partPitStop, setPartPitStop] = useState(0.45);
+  const [partOvertakeMode, setPartOvertakeMode] = useState(50);
 
   // Form Pilota
   const [driverName, setDriverName] = useState("");
-  const [driverTeam, setDriverTeam] = useState("Ferrari");
+  const [driverTeam, setDriverTeam] = useState("");
   const [driverRarity, setDriverRarity] = useState<Rarity>("Epic");
   const [driverSeries, setDriverSeries] = useState(9);
   const [driverLevel, setDriverLevel] = useState(5);
@@ -85,11 +86,12 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
         setPartPowerUnit(p.stats.powerUnit);
         setPartQualifying(p.stats.qualifying);
         setPartPitStop(p.stats.pitStopTime);
+        setPartOvertakeMode(p.stats.overtakeMode ?? 50);
       } else if ("flag" in editingItem) {
         setModalType("driver");
         const d = editingItem as Driver;
         setDriverName(d.name);
-        setDriverTeam(d.team);
+        setDriverTeam(d.team || "");
         setDriverFlag(d.flag || "🏎️");
         setDriverRarity(d.rarity);
         setDriverSeries(d.series);
@@ -141,6 +143,7 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
         powerUnit: Number(partPowerUnit),
         qualifying: Number(partQualifying),
         pitStopTime: Number(partPitStop),
+        overtakeMode: partCategory === "battery" ? Number(partOvertakeMode) : undefined,
       },
       previousStats: editingItem && "stats" in editingItem ? (editingItem as Part).stats : undefined,
     };
@@ -160,7 +163,7 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
     const driverData: Driver = {
       id: editingItem ? editingItem.id : `custom-driver-${Date.now()}`,
       name: driverName.trim(),
-      team: driverTeam.trim(),
+      team: driverTeam.trim() || undefined,
       rarity: driverRarity,
       series: Number(driverSeries),
       level: Number(driverLevel),
@@ -216,6 +219,7 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
     { key: "powerUnit", label: "Power Unit (Auto)" },
     { key: "qualifying", label: "Qualifica" },
     { key: "pitStopTime", label: "Tempo Pit Stop (-sec)" },
+    { key: "overtakeMode", label: "Modalità Overtake (Batteria)" },
     { key: "overtaking", label: "Sorpasso (Pilota)" },
     { key: "defending", label: "Difesa (Pilota)" },
     { key: "raceStart", label: "Partenza (Pilota)" },
@@ -318,6 +322,7 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
                   <option value="frontWing">Alettone Anteriore</option>
                   <option value="suspension">Sospensioni</option>
                   <option value="engine">Motore (Engine)</option>
+                  <option value="battery">⚡ Batteria (Battery)</option>
                 </select>
               </div>
 
@@ -328,10 +333,10 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
                   onChange={(e) => setPartRarity(e.target.value as Rarity)}
                   className="w-full bg-[#0f1115] border border-[#272c38] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#e10600]"
                 >
-                  <option value="Common">Comune (Common)</option>
-                  <option value="Rare">Raro (Rare)</option>
-                  <option value="Epic">Epico (Epic)</option>
-                  <option value="Legendary">Leggendario (Legendary)</option>
+                  <option value="Common">🔵 Comune (Azzurro)</option>
+                  <option value="Rare">🟠 Raro (Arancio)</option>
+                  <option value="Epic">🟣 Epico (Viola)</option>
+                  <option value="Legendary">📜 Leggendario (Beige)</option>
                 </select>
               </div>
 
@@ -420,6 +425,25 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
                   />
                 </div>
               </div>
+
+              {partCategory === "battery" && (
+                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                  <label className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 mb-1">
+                    <span>⚡</span> Modalità Overtake (Statistica Esclusiva Batteria)
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={partOvertakeMode}
+                    onChange={(e) => setPartOvertakeMode(Number(e.target.value))}
+                    className="w-full bg-[#181b22] border border-amber-500/40 rounded px-2.5 py-1.5 text-sm font-mono text-amber-300 font-bold text-center focus:outline-none focus:border-amber-400"
+                  />
+                  <span className="text-[10px] text-zinc-400 mt-1 block">
+                    Statistica chiave delle batterie in F1 Clash: si somma all&apos;assetto auto e al Team Score complessivo.
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -461,27 +485,16 @@ export const AddElementModal: React.FC<AddElementModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-zinc-400 mb-1">Scuderia / Team</label>
-                <input
-                  type="text"
-                  placeholder="es. Red Bull, Ferrari, McLaren"
-                  value={driverTeam}
-                  onChange={(e) => setDriverTeam(e.target.value)}
-                  className="w-full bg-[#0f1115] border border-[#272c38] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#e10600]"
-                />
-              </div>
-
-              <div>
                 <label className="block text-zinc-400 mb-1">Rarità</label>
                 <select
                   value={driverRarity}
                   onChange={(e) => setDriverRarity(e.target.value as Rarity)}
                   className="w-full bg-[#0f1115] border border-[#272c38] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#e10600]"
                 >
-                  <option value="Common">Comune (Common)</option>
-                  <option value="Rare">Raro (Rare)</option>
-                  <option value="Epic">Epico (Epic)</option>
-                  <option value="Legendary">Leggendario (Legendary)</option>
+                  <option value="Common">🔵 Comune (Azzurro)</option>
+                  <option value="Rare">🟠 Raro (Arancio)</option>
+                  <option value="Epic">🟣 Epico (Viola)</option>
+                  <option value="Legendary">📜 Leggendario (Beige)</option>
                 </select>
               </div>
 

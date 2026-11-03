@@ -65,7 +65,7 @@ export function loadProfileData(): {
     }
 
     const cleanParts = Array.isArray(parsed.parts)
-      ? parsed.parts.filter((p) => !p.id.startsWith("br-") && !p.id.startsWith("gb-") && !p.id.startsWith("rw-") && !p.id.startsWith("fw-") && !p.id.startsWith("su-") && !p.id.startsWith("en-"))
+      ? parsed.parts.filter((p) => !p.id.startsWith("br-") && !p.id.startsWith("gb-") && !p.id.startsWith("rw-") && !p.id.startsWith("fw-") && !p.id.startsWith("su-") && !p.id.startsWith("en-") && !p.id.startsWith("bat-"))
       : [];
 
     const cleanDrivers = Array.isArray(parsed.drivers)

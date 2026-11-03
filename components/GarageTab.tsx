@@ -131,7 +131,7 @@ export const GarageTab: React.FC<GarageTabProps> = ({
       if (
         searchQuery &&
         !driver.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !driver.team.toLowerCase().includes(searchQuery.toLowerCase())
+        !(driver.team && driver.team.toLowerCase().includes(searchQuery.toLowerCase()))
       ) {
         return false;
       }
@@ -162,72 +162,18 @@ export const GarageTab: React.FC<GarageTabProps> = ({
     { id: "frontWing", label: "Alettone Ant." },
     { id: "suspension", label: "Sospensioni" },
     { id: "engine", label: "Motore" },
+    { id: "battery", label: "Batteria" },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Banner Principale */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[#181b22] border border-[#272c38]">
-        <div>
-          <div className="flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-[#e10600]" />
-            <h2 className="text-xl font-mono font-black text-white tracking-tight uppercase">
-              Il Mio Garage Personalizzato
-            </h2>
-          </div>
-          <p className="text-xs text-zinc-400 font-mono mt-1">
-            Gestisci il tuo inventario reale 100% personalizzato, esegui Upgrade Rapidi di livello o modifica i valori stile Excel.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Toggle Schede vs Tabella Excel */}
-          <div className="flex items-center bg-[#0f1115] p-1 rounded-xl border border-[#272c38]">
-            <button
-              onClick={() => setViewMode("cards")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
-                viewMode === "cards"
-                  ? "bg-[#272c38] text-white shadow"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Schede</span>
-            </button>
-
-            <button
-              onClick={() => setViewMode("table")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
-                viewMode === "table"
-                  ? "bg-[#06b6d4] text-black shadow font-black"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              <Table className="w-3.5 h-3.5" />
-              <span>Tabella Excel</span>
-            </button>
-          </div>
-
-          <button
-            onClick={() =>
-              onOpenAddModal(
-                activeSection === "parts" ? "part" : activeSection === "drivers" ? "driver" : "boost"
-              )
-            }
-            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#e10600] to-[#b30500] hover:from-[#f00700] hover:to-[#c50500] text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nuovo {activeSection === "parts" ? "Componente" : activeSection === "drivers" ? "Pilota" : "Boost"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Navigazione Sezioni (Componenti / Piloti / Boost) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#272c38] pb-3">
-        <div className="flex items-center gap-2 bg-[#181b22] p-1 rounded-xl border border-[#272c38]">
+    <div className="space-y-4">
+      {/* TOOLBAR UNIFICATA SLIM (Header compatto senza banner ridondante) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#181b22] rounded-2xl border border-[#272c38]">
+        {/* Navigazione Sezioni (Componenti / Piloti / Boost) */}
+        <div className="flex items-center gap-1.5 bg-[#0f1115] p-1 rounded-xl border border-[#272c38]">
           <button
             onClick={() => setActiveSection("parts")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
               activeSection === "parts"
                 ? "bg-[#e10600] text-white shadow-md"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -239,7 +185,7 @@ export const GarageTab: React.FC<GarageTabProps> = ({
 
           <button
             onClick={() => setActiveSection("drivers")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
               activeSection === "drivers"
                 ? "bg-[#e10600] text-white shadow-md"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -251,7 +197,7 @@ export const GarageTab: React.FC<GarageTabProps> = ({
 
           <button
             onClick={() => setActiveSection("boosts")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
               activeSection === "boosts"
                 ? "bg-[#e10600] text-white shadow-md"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -262,6 +208,52 @@ export const GarageTab: React.FC<GarageTabProps> = ({
           </button>
         </div>
 
+        {/* Azioni Toolbar: Toggle Schede/Excel + Tasto Nuovo Elemento */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center bg-[#0f1115] p-1 rounded-xl border border-[#272c38]">
+            <button
+              onClick={() => setViewMode("cards")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                viewMode === "cards"
+                  ? "bg-[#272c38] text-white shadow"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Schede</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode("table")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                viewMode === "table"
+                  ? "bg-[#06b6d4] text-black shadow font-black"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <Table className="w-3.5 h-3.5" />
+              <span>Excel</span>
+            </button>
+          </div>
+
+          <button
+            onClick={() =>
+              onOpenAddModal(
+                activeSection === "parts" ? "part" : activeSection === "drivers" ? "driver" : "boost"
+              )
+            }
+            className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#e10600] to-[#b30500] hover:from-[#f00700] hover:to-[#c50500] text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>
+              Nuovo {activeSection === "parts" ? "Componente" : activeSection === "drivers" ? "Pilota" : "Boost"}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Barra Ricerca e Filtri Secondari */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#14171d] p-3 rounded-xl border border-[#272c38]">
         {/* Ricerca */}
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -316,11 +308,11 @@ export const GarageTab: React.FC<GarageTabProps> = ({
             onChange={(e) => setSelectedRarity(e.target.value)}
             className="bg-[#181b22] border border-[#272c38] rounded px-2 py-1 text-zinc-300 text-xs font-mono focus:outline-none focus:border-[#e10600]"
           >
-            <option value="all">Tutte</option>
-            <option value="Common">Comune</option>
-            <option value="Rare">Raro</option>
-            <option value="Epic">Epico</option>
-            <option value="Legendary">Leggendario</option>
+            <option value="all">Tutte le Rarità</option>
+            <option value="Common">🔵 Comune (Azzurro)</option>
+            <option value="Rare">🟠 Raro (Arancio)</option>
+            <option value="Epic">🟣 Epico (Viola)</option>
+            <option value="Legendary">📜 Leggendario (Beige)</option>
           </select>
         </div>
 
@@ -378,6 +370,8 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                     const isUpgrading = upgradingPartId === part.id;
                     const stats = part.stats;
 
+                    const rarityStyle = getRarityClasses(part.rarity);
+
                     return (
                       <div
                         key={part.id}
@@ -386,6 +380,10 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                             ? "bg-[#181b22] border-[#272c38] hover:border-zinc-500"
                             : "bg-[#121419]/70 border-[#202530] opacity-60 hover:opacity-90"
                         }`}
+                        style={{
+                          borderTopColor: part.owned ? rarityStyle.accent : undefined,
+                          borderTopWidth: part.owned ? "2px" : undefined,
+                        }}
                       >
                         {/* Header Card */}
                         <div className="flex items-center justify-between gap-2 mb-2">
@@ -490,6 +488,12 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                               <div className="text-[10px] text-zinc-500 uppercase">Pit Stop</div>
                               <div className="font-bold text-[#06b6d4]">{stats.pitStopTime}s</div>
                             </div>
+                            {part.category === "battery" && (
+                              <div className="p-1.5 rounded bg-amber-500/10 border border-amber-500/30 text-center">
+                                <div className="text-[10px] text-amber-400 uppercase font-bold">⚡ Overtake</div>
+                                <div className="font-bold text-amber-300">{stats.overtakeMode ?? 0}</div>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           tempPartUpgrade && (
@@ -513,10 +517,13 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                                   { label: "Power Unit", key: "powerUnit", isPit: false },
                                   { label: "Qualifica", key: "qualifying", isPit: false },
                                   { label: "Pit Stop", key: "pitStopTime", isPit: true },
+                                  ...(part.category === "battery"
+                                    ? [{ label: "⚡ Overtake", key: "overtakeMode", isPit: false }]
+                                    : []),
                                 ].map((item) => {
                                   const k = item.key as keyof CarStats;
-                                  const currentVal = part.stats[k];
-                                  const newVal = tempPartUpgrade[k];
+                                  const currentVal = part.stats[k] ?? 0;
+                                  const newVal = tempPartUpgrade[k] ?? 0;
                                   const diff = newVal - currentVal;
                                   const delta = formatDelta(diff, item.isPit);
 
@@ -612,6 +619,8 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                       stats.raceStart +
                       stats.tyreManagement;
 
+                    const rarityStyle = getRarityClasses(driver.rarity);
+
                     return (
                       <div
                         key={driver.id}
@@ -620,12 +629,16 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                             ? "bg-[#181b22] border-[#272c38] hover:border-zinc-500"
                             : "bg-[#121419]/70 border-[#202530] opacity-60 hover:opacity-90"
                         }`}
+                        style={{
+                          borderTopColor: driver.owned ? rarityStyle.accent : undefined,
+                          borderTopWidth: driver.owned ? "2px" : undefined,
+                        }}
                       >
                         {/* Header Pilota */}
                         <div className="flex items-center justify-between gap-2 mb-2">
                           <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono">
                             <span className="text-base">{driver.flag}</span>
-                            <span className="text-zinc-300 font-semibold">{driver.team}</span>
+                            {driver.team && <span className="text-zinc-300 font-semibold">{driver.team}</span>}
                           </div>
 
                           <div className="flex items-center gap-1.5">
@@ -980,6 +993,7 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                     <th className="p-2.5 w-20 text-center">Power Unit</th>
                     <th className="p-2.5 w-20 text-center">Qualifica</th>
                     <th className="p-2.5 w-20 text-center text-[#06b6d4]">Pit (s)</th>
+                    <th className="p-2.5 w-20 text-center text-amber-400">⚡ Overtake</th>
                     <th className="p-2.5 w-20 text-center">Posseduto</th>
                     <th className="p-2.5 w-16 text-center">Azioni</th>
                   </tr>
@@ -1010,6 +1024,7 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                           <option value="frontWing">Alettone Ant.</option>
                           <option value="suspension">Sospensioni</option>
                           <option value="engine">Motore</option>
+                          <option value="battery">Batteria</option>
                         </select>
                       </td>
 
@@ -1107,6 +1122,24 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                       </td>
 
                       <td className="p-2 text-center">
+                        {part.category === "battery" ? (
+                          <input
+                            type="number"
+                            value={part.stats.overtakeMode ?? 0}
+                            onChange={(e) =>
+                              onUpdatePart({
+                                ...part,
+                                stats: { ...part.stats, overtakeMode: Number(e.target.value) },
+                              })
+                            }
+                            className="w-16 bg-amber-500/10 text-center font-bold text-amber-300 px-1 py-1 rounded border border-amber-500/30 focus:border-amber-400 focus:bg-[#0f1115]"
+                          />
+                        ) : (
+                          <span className="text-zinc-600 font-mono">-</span>
+                        )}
+                      </td>
+
+                      <td className="p-2 text-center">
                         <input
                           type="checkbox"
                           checked={part.owned}
@@ -1139,7 +1172,6 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                 <thead>
                   <tr className="bg-[#0f1115] text-zinc-400 border-b border-[#272c38] text-[11px] uppercase">
                     <th className="p-2.5">Nome</th>
-                    <th className="p-2.5">Scuderia</th>
                     <th className="p-2.5 w-12 text-center">Icona</th>
                     <th className="p-2.5 w-16 text-center">Serie</th>
                     <th className="p-2.5 w-16 text-center">Lv</th>
@@ -1161,15 +1193,6 @@ export const GarageTab: React.FC<GarageTabProps> = ({
                           value={driver.name}
                           onChange={(e) => onUpdateDriver({ ...driver, name: e.target.value })}
                           className="w-full bg-transparent px-2 py-1 rounded text-white font-bold border border-transparent hover:border-[#272c38] focus:border-[#e10600] focus:bg-[#0f1115]"
-                        />
-                      </td>
-
-                      <td className="p-2">
-                        <input
-                          type="text"
-                          value={driver.team}
-                          onChange={(e) => onUpdateDriver({ ...driver, team: e.target.value })}
-                          className="w-full bg-transparent text-zinc-300 px-2 py-1 rounded border border-transparent hover:border-[#272c38] focus:border-[#e10600] focus:bg-[#0f1115]"
                         />
                       </td>
 
